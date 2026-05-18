@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Fun to Report · 趣味演说家</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #b8e1fc 0%, #f9d9e7 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            font-family: 'Quicksand', 'Comic Neue', sans-serif;
+        }
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 64px;
+            padding: 28px 32px 40px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.15);
+        }
+        h1 {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 2.4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #3c9e3c, #ff914d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .version-select {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 10px 0 30px;
+        }
+        .version-btn {
+            font-weight: 700;
+            font-size: 1.25rem;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            background: #e2e0f0;
+            color: #5a4b81;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .version-btn.active {
+            background: #f9a66c;
+            color: white;
+            transform: scale(1.02);
+        }
+        .report-box {
+            border-radius: 48px;
+            padding: 28px;
+            margin-bottom: 25px;
+            border-bottom: 8px solid;
+        }
+        .base-box { background: #fffbee; border-bottom-color: #fbc4ab; }
+        .challenge-box { background: #fef9f0; border-bottom-color: #b2d9f0; }
+        .report-title {
+            font-size: 1.7rem;
+            font-family: 'Patrick Hand', cursive;
+            text-align: center;
+            background: #ffedd5;
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 24px;
+            padding: 6px 24px;
+            border-radius: 60px;
+            color: #c25d2e;
+        }
+        .report-text {
+            font-size: 1.45rem;
+            line-height: 1.75;
+            font-weight: 500;
+            color: #2d3e2b;
+            background: rgba(255,251,235,0.6);
+            padding: 16px;
+            border-radius: 40px;
+        }
+        .icon-replace {
+            display: inline-block;
+            width: 52px;
+            height: 52px;
+            vertical-align: middle;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 6px;
+        }
+        .cat-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea46e.png'); }
+        .ear-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea470.png'); }
+        .eye-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea471.png'); }
+        .squirrel-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea46f.png'); }
+        .tail-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea473.png'); }
+        .frog-icon { background-image: url('https://pic1.imgdb.cn/item/6a0aba82febbe1263e6ea472.png'); }
+        .bug-icon { background-image: url('https://pic1.imgdb.cn/item/6a0abcd8febbe1263e6ea567.png'); }
+        .mic-btn {
+            display: block;
+            margin: 12px auto 20px;
+            width: 98px;
+            height: 98px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background: linear-gradient(145deg, #FFB347, #FF7E5F);
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+        .mic-btn.recording {
+            background: linear-gradient(145deg, #f85757, #cf3c3c);
+            animation: pulseMic 1.2s infinite;
+        }
+        @keyframes pulseMic {
+            0% { box-shadow: 0 0 0 0 rgba(240,80,80,0.6); }
+            70% { box-shadow: 0 0 0 18px rgba(240,80,80,0); }
+            100% { box-shadow: 0 0 0 0 rgba(240,80,80,0); }
+        }
+        .volume-meter {
+            width: 200px;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .volume-level {
+            width: 0%;
+            height: 100%;
+            background: #4caf50;
+            transition: width 0.05s;
+        }
+        .status-msg {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #d37e2c;
+            margin: 8px auto;
+            font-weight: 500;
+        }
+        .debug-panel {
+            background: #f4f0e6;
+            border-radius: 24px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #5e4b3c;
+            text-align: center;
+        }
+        .assessment-box {
+            background: #fef7e0;
+            border-radius: 56px;
+            padding: 24px;
+            margin-top: 20px;
+            border: 2px dotted #ffbc6e;
+        }
+        .assessment-item {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 10px 24px;
+            border-radius: 60px;
+            margin-bottom: 18px;
+        }
+        .stars { color: #FFB347; font-size: 1.9rem; letter-spacing: 6px; }
+        .score-display {
+            background: #f0ffff;
+            border-radius: 48px;
+            margin-top: 28px;
+            padding: 20px;
+            text-align: center;
+            border-left: 12px solid #ffab62;
+            display: none;
+        }
+        .submit-btn {
+            display: block;
+            margin: 32px auto 8px;
+            padding: 16px 42px;
+            border: none;
+            border-radius: 48px;
+            background: #4caf7f;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .warning-box {
+            background: #ffe0b5;
+            border-left: 6px solid #ff9800;
+            padding: 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #977c5f; }
+        @media (max-width: 600px) {
+            .report-text { font-size: 1.15rem; }
+            .icon-replace { width: 38px; height: 38px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎤 Fun to report · 趣味演说家</h1>
+    <div class="version-select">
+        <button class="version-btn active" id="baseBtn">📖 基础版</button>
+        <button class="version-btn" id="challengeBtn">🌟 挑战版</button>
+    </div>
+
+    <div class="report-box base-box" id="baseBox">
+        <div class="report-title">🐾 基础绘本朗读</div>
+        <div class="report-text" id="baseText">
+            <div style="text-align:center; font-size:1.7rem; margin-bottom:12px;">Coco's day in the park</div>
+            Woof, woof! I'm Coco. I see a cat.<br>
+            It is cute. It has small ears and big eyes.<br>
+            I see two squirrels. They are brown.<br>
+            They have big long tails.<br>
+            I see two frogs. They are small.<br>
+            They eat bad bugs.<br>
+            I like the small animals.
+        </div>
+    </div>
+
+    <div class="report-box challenge-box" id="challengeBox" style="display: none;">
+        <div class="report-title">🌈 挑战版 · 图像故事</div>
+        <div class="report-text">
+            <div style="text-align:center; font-size:1.7rem; margin-bottom:12px;">Coco's day in the park</div>
+            Woof, woof! I'm Coco. I see a <span class="icon-replace cat-icon"></span>.<br>
+            It is cute. It has small <span class="icon-replace ear-icon"></span> and big <span class="icon-replace eye-icon"></span>.<br>
+            I see two <span class="icon-replace squirrel-icon"></span>s. They are brown.<br>
+            They have big long <span class="icon-replace tail-icon"></span>s.<br>
+            I see two <span class="icon-replace frog-icon"></span>s. They are small.<br>
+            They eat bad <span class="icon-replace bug-icon"></span>s.<br>
+            I like the small animals.
+        </div>
+    </div>
+
+    <button class="mic-btn" id="micBtn">🎤</button>
+    <div class="volume-meter" id="volumeMeter"><div class="volume-level" id="volumeLevel"></div></div>
+    <div class="status-msg" id="statusMsg">⚡ 请确保使用 HTTPS 或 localhost 访问，否则语音识别不可用</div>
+    <div class="warning-box" id="envWarning"></div>
+    <div class="debug-panel" id="debugPanel">
+        🔍 诊断信息：<span id="debugInfo">初始化中...</span><br>
+        📝 识别文本：<span id="debugText">（暂无）</span>
+    </div>
+
+    <div class="assessment-box">
+        <div style="text-align:center;"><span class="assessment-title">⭐ 课堂评价 ⭐</span></div>
+        <div class="assessment-item"><span>🗣️ 发音正确</span><div class="stars" id="star1">☆☆☆</div></div>
+        <div class="assessment-item"><span>💨 表达流利</span><div class="stars" id="star2">☆☆☆</div></div>
+        <div class="assessment-item"><span>🎭 表演生动</span><div class="stars" id="star3">☆☆☆</div></div>
+    </div>
+    <div class="score-display" id="scoreDisplay">
+        <div class="score-text">🏆 最终得分：<span id="totalScore">0</span>/9 分</div>
+        <div class="feedback-text" id="feedbackText"></div>
+    </div>
+    <button class="submit-btn" id="submitBtn">✉️ 提交学习结果</button>
+    <footer>🎙️ 点击麦克风 → 允许麦克风权限 → 清晰朗读英文 → 再次点击停止后打分</footer>
+</div>
+
+<script>
+    // ======================== 环境检测 ========================
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const envWarningDiv = document.getElementById('envWarning');
+    if (!isSecure) {
+        envWarningDiv.style.display = 'block';
+        envWarningDiv.innerHTML = '⚠️ 当前页面不是通过 HTTPS 或 localhost 访问，浏览器会阻止语音识别功能。请使用 <strong>http://localhost</strong> 或 <strong>https://</strong> 打开此页面，否则无法进行语音评分。';
+    }
+
+    // ======================== 文本处理函数 ========================
+    function getCanonicalText() {
+        let text = "";
+        if (baseBtn.classList.contains('active')) {
+            text = document.getElementById('baseText').innerText;
+        } else {
+            const challengeDiv = document.querySelector('#challengeBox .report-text');
+            if (challengeDiv) text = challengeDiv.innerText || challengeDiv.textContent;
+        }
+        return text.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function getKeywords() {
+        const full = getCanonicalText();
+        const stop = new Set(['i','am','is','are','it','they','have','has','the','a','and','of','to','in','for','on','with','by','at','that','this','be','my','your','his','her','its','our','their','from','but','or','as','was','were','been','being']);
+        const words = full.split(' ').filter(w => w.length && !stop.has(w));
+        return [...new Set(words)];
+    }
+    function getKeyPhrases() {
+        return ["coco","see a cat","small ears","big eyes","two squirrels","brown","long tails","two frogs","small","bad bugs","like animals","woof woof","coco's day","in the park"];
+    }
+    function calculatePronunciationScore(recognizedText) {
+        if (!recognizedText || recognizedText.trim().length === 0) return 0;
+        const recLower = recognizedText.toLowerCase();
+        const keywords = getKeywords();
+        let matched = 0;
+        for (let kw of keywords) if (recLower.includes(kw)) matched++;
+        const kwRatio = keywords.length ? matched / keywords.length : 0;
+        const phrases = getKeyPhrases();
+        let phraseMatch = 0;
+        for (let ph of phrases) if (recLower.includes(ph.toLowerCase())) phraseMatch++;
+        const phraseBonus = phrases.length ? (phraseMatch / phrases.length) * 0.5 : 0;
+        const expectedLen = getCanonicalText().length;
+        const lenPenalty = Math.abs(recognizedText.length - expectedLen) / expectedLen > 0.7 ? 0.5 : 1;
+        let raw = (kwRatio * 2.5) + phraseBonus;
+        raw = Math.min(3, raw * lenPenalty);
+        return Math.max(0, Math.min(3, Math.round(raw)));
+    }
+    function calculateFluency(pronounceScore, durationMs) {
+        let base = pronounceScore;
+        if (durationMs < 500) base = Math.max(0, base - 1);
+        if (durationMs > 6000) base = Math.max(0, base - 1);
+        return base;
+    }
+    function calculateLiveliness(pronounceScore, wordCount) {
+        let base = pronounceScore;
+        if (wordCount > 15 && pronounceScore >= 2) base = Math.min(3, base + 1);
+        return base;
+    }
+
+    // ======================== 全局变量 ========================
+    let mediaStream = null;
+    let audioContext = null;
+    let sourceNode = null;
+    let analyserNode = null;
+    let animationId = null;
+    let recognition = null;
+    let isRecording = false;
+    let scores = { correct: 0, fluent: 0, lively: 0 };
+    let hasSubmitted = false;
+    let startTime = 0;
+    let finalTranscript = "";
+    let latestInterim = "";
+    let stopTimeout = null;
+
+    const micBtn = document.getElementById('micBtn');
+    const star1 = document.getElementById('star1');
+    const star2 = document.getElementById('star2');
+    const star3 = document.getElementById('star3');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const totalScoreEl = document.getElementById('totalScore');
+    const feedbackText = document.getElementById('feedbackText');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const debugInfoSpan = document.getElementById('debugInfo');
+    const debugTextSpan = document.getElementById('debugText');
+    const volumeLevel = document.getElementById('volumeLevel');
+
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const isSpeechSupported = !!SpeechRecognitionAPI;
+    let recognitionAvailable = isSpeechSupported && isSecure;
+
+    function setDebugInfo(msg) {
+        debugInfoSpan.innerText = msg;
+        console.log("[DEBUG]", msg);
+    }
+    function setDebugText(text) {
+        debugTextSpan.innerText = text || "(空)";
+    }
+
+    // 停止音量检测
+    function stopVolumeMeter() {
+        if (animationId) cancelAnimationFrame(animationId);
+        if (sourceNode) sourceNode.disconnect();
+        if (analyserNode) analyserNode.disconnect();
+        if (audioContext) audioContext.close().catch(e=>console.warn);
+        audioContext = null;
+        sourceNode = null;
+        analyserNode = null;
+        volumeLevel.style.width = '0%';
+    }
+
+    // 启动音量检测
+    function startVolumeMeter(stream) {
+        if (!stream) return;
+        if (audioContext && audioContext.state !== 'closed') stopVolumeMeter();
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 256;
+        sourceNode = audioContext.createMediaStreamSource(stream);
+        sourceNode.connect(analyserNode);
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+        function updateVolume() {
+            if (!analyserNode) return;
+            analyserNode.getByteTimeDomainData(dataArray);
+            let maxSample = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                const v = (dataArray[i] - 128) / 128;
+                maxSample = Math.max(maxSample, Math.abs(v));
+            }
+            let percent = Math.min(100, maxSample * 100);
+            volumeLevel.style.width = percent + '%';
+            animationId = requestAnimationFrame(updateVolume);
+        }
+        updateVolume();
+        if (audioContext.state === 'suspended') audioContext.resume();
+    }
+
+    // 请求麦克风权限
+    async function requestMicrophone() {
+        if (!recognitionAvailable) {
+            statusMsg.innerText = "❌ 语音识别不可用（非安全环境或不支持）";
+            setDebugInfo("不可用: 安全环境=" + isSecure + ", 支持API=" + isSpeechSupported);
+            return false;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStream = stream;
+            startVolumeMeter(stream);
+            statusMsg.innerText = "🎤 麦克风已就绪，点击麦克风开始朗读";
+            setDebugInfo("麦克风授权成功");
+            return true;
+        } catch (err) {
+            console.error("getUserMedia错误", err);
+            let errorMsg = "";
+            if (err.name === 'NotAllowedError') errorMsg = "❌ 请允许麦克风权限后刷新页面";
+            else if (err.name === 'NotFoundError') errorMsg = "❌ 未检测到麦克风设备";
+            else errorMsg = "❌ 无法获取麦克风: " + err.message;
+            statusMsg.innerText = errorMsg;
+            setDebugInfo(errorMsg);
+            return false;
+        }
+    }
+
+    // 创建语音识别实例
+    function createRecognition() {
+        if (!recognitionAvailable) return null;
+        const recog = new SpeechRecognitionAPI();
+        recog.lang = 'en-US';
+        recog.continuous = true;
+        recog.interimResults = true;
+        recog.maxAlternatives = 1;
+
+        recog.onstart = () => {
+            console.log("Recognition started");
+            startTime = Date.now();
+            finalTranscript = "";
+            latestInterim = "";
+            statusMsg.innerText = "🎙️ 正在聆听... 请朗读英文内容";
+            setDebugInfo("识别器中...");
+            setDebugText("聆听中");
+        };
+        recog.onresult = (event) => {
+            let interim = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript + " ";
+                } else {
+                    interim += transcript;
+                }
+            }
+            if (interim) {
+                latestInterim = interim;
+                setDebugText("临时: " + interim);
+            }
+            if (finalTranscript) {
+                setDebugText(finalTranscript);
+            }
+        };
+        recog.onerror = (event) => {
+            console.error("Recognition error:", event.error);
+            setDebugInfo("错误: " + event.error);
+            statusMsg.innerText = "⚠️ 识别错误: " + event.error;
+            if (event.error === 'no-speech') {
+                alert("未检测到语音，请确保麦克风工作并大声朗读");
+                finishRecordingAndScore();
+            } else if (event.error === 'not-allowed') {
+                alert("麦克风权限被拒绝，请允许后刷新");
+                resetUI();
+            } else {
+                finishRecordingAndScore();
+            }
+        };
+        recog.onend = () => {
+            console.log("Recognition ended");
+            setDebugInfo("识别结束");
+            if (isRecording) finishRecordingAndScore();
+        };
+        return recog;
+    }
+
+    function finishRecordingAndScore() {
+        if (stopTimeout) clearTimeout(stopTimeout);
+        let recognizedText = finalTranscript.trim();
+        if (!recognizedText && latestInterim.trim()) {
+            recognizedText = latestInterim.trim();
+            setDebugText("⚠️ 使用临时结果: " + recognizedText);
+        }
+        if (!recognizedText) {
+            statusMsg.innerText = "❌ 未识别到任何语音，请重试";
+            setDebugInfo("无识别结果");
+            performScoring("");
+        } else {
+            statusMsg.innerText = "✅ 朗读完成，正在评分...";
+            performScoring(recognizedText);
+        }
+        if (recognition) {
+            try { recognition.abort(); } catch(e) {}
+            recognition = null;
+        }
+        isRecording = false;
+        micBtn.classList.remove('recording');
+        micBtn.innerText = '🎤';
+    }
+
+    function performScoring(recognizedText) {
+        setDebugText("最终评分文本: " + (recognizedText || "(空)"));
+        if (!recognizedText.trim()) {
+            scores.correct = 0;
+            scores.fluent = 0;
+            scores.lively = 0;
+        } else {
+            const pronounce = calculatePronunciationScore(recognizedText);
+            scores.correct = pronounce;
+            const duration = Date.now() - startTime;
+            scores.fluent = calculateFluency(pronounce, duration);
+            const wordCount = recognizedText.split(/\s+/).length;
+            scores.lively = calculateLiveliness(pronounce, wordCount);
+        }
+        star1.innerText = '★'.repeat(scores.correct) + '☆'.repeat(3 - scores.correct);
+        star2.innerText = '★'.repeat(scores.fluent) + '☆'.repeat(3 - scores.fluent);
+        star3.innerText = '★'.repeat(scores.lively) + '☆'.repeat(3 - scores.lively);
+        const total = scores.correct + scores.fluent + scores.lively;
+        totalScoreEl.innerText = total;
+        if (total >= 7) feedbackText.innerText = "🎉 优秀！发音标准，流畅生动！";
+        else if (total >= 5) feedbackText.innerText = "👍 良好，继续练习会更棒！";
+        else feedbackText.innerText = "💪 加油，多读几遍原文！";
+        scoreDisplay.style.display = 'block';
+        submitBtn.style.display = 'block';
+        statusMsg.innerText = "✨ 评分完成，可提交结果";
+    }
+
+    async function startRecording() {
+        if (!recognitionAvailable) {
+            alert("语音识别不可用，请确保使用 HTTPS 或 localhost 访问，并使用 Chrome/Edge 浏览器");
+            return;
+        }
+        if (!mediaStream) {
+            const ok = await requestMicrophone();
+            if (!ok) return;
+        }
+        if (recognition) try { recognition.abort(); } catch(e) {}
+        recognition = createRecognition();
+        if (!recognition) return;
+        try {
+            recognition.start();
+            isRecording = true;
+            micBtn.classList.add('recording');
+            micBtn.innerText = '⏹️';
+            statusMsg.innerText = "🎙️ 正在聆听... 请朗读英文内容";
+        } catch (err) {
+            console.error("start error", err);
+            statusMsg.innerText = "启动失败，请刷新页面重试";
+            setDebugInfo("启动异常: " + err.message);
+        }
+    }
+
+    function stopRecording() {
+        if (recognition) {
+            try { recognition.stop(); } catch(e) {}
+        }
+        if (stopTimeout) clearTimeout(stopTimeout);
+        stopTimeout = setTimeout(() => {
+            if (isRecording) finishRecordingAndScore();
+        }, 800);
+    }
+
+    function resetUI() {
+        scores = { correct: 0, fluent: 0, lively: 0 };
+        star1.innerText = '☆☆☆';
+        star2.innerText = '☆☆☆';
+        star3.innerText = '☆☆☆';
+        scoreDisplay.style.display = 'none';
+        submitBtn.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.innerText = '✉️ 提交学习结果';
+        hasSubmitted = false;
+        finalTranscript = "";
+        latestInterim = "";
+        setDebugText("（等待朗读）");
+        if (isRecording) stopRecording();
+        micBtn.classList.remove('recording');
+        micBtn.innerText = '🎤';
+        statusMsg.innerText = "⚡ 点击麦克风开始朗读";
+    }
+
+    micBtn.addEventListener('click', async () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            resetUI();
+            await startRecording();
+        }
+    });
+
+    // 页面加载时预请求麦克风权限（但不录音）
+    (async () => {
+        if (recognitionAvailable) {
+            await requestMicrophone();
+        } else {
+            statusMsg.innerText = "❌ 语音识别不可用，请使用 HTTPS/localhost 访问";
+            micBtn.disabled = true;
+        }
+    })();
+
+    // ======================== 版本切换与第一次选择 ========================
+    const baseBtn = document.getElementById('baseBtn');
+    const challengeBtn = document.getElementById('challengeBtn');
+    const baseBox = document.getElementById('baseBox');
+    const challengeBox = document.getElementById('challengeBox');
+    let firstChoice = localStorage.getItem('firstVersionChoice');
+    let currentVersion = 'base';
+    function setActiveVersion(version) {
+        if (version === 'base') {
+            baseBtn.classList.add('active');
+            challengeBtn.classList.remove('active');
+            baseBox.style.display = 'block';
+            challengeBox.style.display = 'none';
+            currentVersion = 'base';
+        } else {
+            baseBtn.classList.remove('active');
+            challengeBtn.classList.add('active');
+            baseBox.style.display = 'none';
+            challengeBox.style.display = 'block';
+            currentVersion = 'challenge';
+        }
+        if (firstChoice === null) {
+            firstChoice = currentVersion;
+            localStorage.setItem('firstVersionChoice', firstChoice);
+        }
+        resetUI();
+    }
+    baseBtn.addEventListener('click', () => setActiveVersion('base'));
+    challengeBtn.addEventListener('click', () => setActiveVersion('challenge'));
+    if (firstChoice) setActiveVersion(firstChoice);
+    else setActiveVersion('base');
+
+    // 提交数据
+    submitBtn.addEventListener('click', async () => {
+        if (hasSubmitted) { alert("已提交过"); return; }
+        if (scores.correct === 0 && scores.fluent === 0 && scores.lively === 0) {
+            alert("请先点击麦克风完成朗读评分再提交");
+            return;
+        }
+        const firstVer = localStorage.getItem('firstVersionChoice');
+        const studentFirst = firstVer === 'base' ? "A：基础版" : "B：挑战版";
+        const currentChoice = currentVersion === 'base' ? "基础版" : "挑战版";
+        const total = scores.correct + scores.fluent + scores.lively;
+        const postData = {
+            firstSelectedVersion: studentFirst,
+            currentSelectedVersion: currentChoice,
+            pronunciationScore: scores.correct,
+            fluencyScore: scores.fluent,
+            performanceScore: scores.lively,
+            totalScore: total,
+            submitTimestamp: new Date().toISOString(),
+            localTime: new Date().toLocaleString('zh-CN')
+        };
+        try {
+            const resp = await fetch("https://quickform.cn/api/f5rsnq2wfq", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(postData)
+            });
+            if (resp.ok) {
+                alert("提交成功！");
+                submitBtn.disabled = true;
+                hasSubmitted = true;
+            } else alert("提交失败，请重试");
+        } catch(e) {
+            alert("网络错误，请检查连接");
+        }
+    });
+</script>
+</body>
+</html>
